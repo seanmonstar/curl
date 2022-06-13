@@ -22,17 +22,7 @@
 
 #include "curl_setup.h"
 
-#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x600) && \
-  defined(SRWLOCK_INIT)
-#define GLOBAL_INIT_IS_THREADSAFE
-
-#define curl_simple_lock SRWLOCK
-#define CURL_SIMPLE_LOCK_INIT SRWLOCK_INIT
-
-#define curl_simple_lock_lock(m) AcquireSRWLockExclusive(m)
-#define curl_simple_lock_unlock(m) ReleaseSRWLockExclusive(m)
-
-#elif defined (HAVE_ATOMIC)
+#ifdef HAVE_ATOMIC
 #define GLOBAL_INIT_IS_THREADSAFE
 #include <stdatomic.h>
 
@@ -62,5 +52,16 @@ static inline void curl_simple_lock_unlock(curl_simple_lock *lock)
 {
   atomic_store_explicit(lock, false, memory_order_release);
 }
+
+#elif defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x600) && \
+  defined(SRWLOCK_INIT)
+#define GLOBAL_INIT_IS_THREADSAFE
+
+#define curl_simple_lock SRWLOCK
+#define CURL_SIMPLE_LOCK_INIT SRWLOCK_INIT
+
+#define curl_simple_lock_lock(m) AcquireSRWLockExclusive(m)
+#define curl_simple_lock_unlock(m) ReleaseSRWLockExclusive(m)
+
 
 #endif
