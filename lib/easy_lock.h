@@ -22,9 +22,9 @@
 
 #include "curl_setup.h"
 
-#if defined(_WIN32_WINNT) && _WIN32_WINNT >= 0x600
+#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x600) && \
+  defined(SRWLOCK_INIT)
 #define GLOBAL_INIT_IS_THREADSAFE
-#include <synchapi.h>
 
 #define curl_simple_lock SRWLOCK
 #define CURL_SIMPLE_LOCK_INIT SRWLOCK_INIT
