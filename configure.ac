@@ -4266,10 +4266,7 @@ else
     AC_LANG_PROGRAM([[
       #include <windows.h>
     ]],[[
-      #if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x600) && \
-        defined(SRWLOCK_INIT)
-      #define GLOBAL_INIT_IS_THREADSAFE
-      #else
+      #if (WINVER < 0x600) && (_WIN32_WINNT < 0x600)
       #error
       #endif
     ]])
